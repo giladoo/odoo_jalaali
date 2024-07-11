@@ -18,7 +18,7 @@ import { localization } from "@web/core/l10n/localization";
 import { ensureArray } from "@web/core/utils/arrays";
 
 const { DateTime, Info } = luxon;
-
+//console.log('session:', session)
 /**
  * @typedef DateItem
  * @property {string} id
@@ -113,7 +113,8 @@ const jGetStartOfCentury = (date) => Math.floor(jalaali.toJalaali(date.year, 3, 
  * @returns {DateTime}
  */
 const jalaaliDate = (date) => {
-        if (session.user_context.lang == 'fa_IR' && date.year < 1600){
+//        console.log('jalaaliDate', isFaLang(session), date)
+        if (isFaLang(session) && date.year < 1600){
             const gDate = jalaali.toGregorian(date.year, date.month, date.day)
             date = DateTime.fromString(`${gDate.gy}-${gDate.gm}-${gDate.gd}`, JALAALI_FORMAT)
         }
@@ -198,7 +199,8 @@ const toDateItem = ({ isOutOfRange = false, isValid = true, label, range, extraC
     isOutOfRange,
     isValid,
     // Gilaneh
-    label: session.user_context.lang == 'fa_IR' ? toDateItemLabel(range[0], label) : String(range[0][label]) ,
+
+    label: isFaLang(session) ? toDateItemLabel(range[0], label) : String(range[0][label]) ,
     range,
     extraClass,
 });
@@ -232,6 +234,10 @@ const toWeekItem = (weekDayItems) => ({
     days: weekDayItems,
 });
 
+const isFaLang = (_session) => {
+    return _session.lang_url_code && _session.lang_url_code == 'fa' || _session.user_context && _session.user_context.lang == 'fa_IR'
+
+}
 // Time constants
 const HOURS = numberRange(0, 24).map((hour) => [hour, String(hour)]);
 const MINUTES = numberRange(0, 60).map((minute) => [minute, String(minute || 0).padStart(2, "0")]);
@@ -391,10 +397,10 @@ const PRECISION_LEVELS_fa = new Map()
                 let jDate = jalaali.toGregorian(date.year, date.month, date.day)
                 date = DateTime.fromString(`${jDate.gy}-${jDate.gm}-${jDate.gd}`, JALAALI_FORMAT)
             }
-            const titles = [`${date.plus({'month': 1}).monthLong} ${jalaali.toJalaali(date.year, date.month, date.day).jy}`]
+            const titles = [`${date.set({'day': 23}).monthLong} ${jalaali.toJalaali(date.year, date.month, date.day).jy}`]
 
             if (additionalMonth) {
-                const nextDate = date.plus({ month: 1 });
+                const nextDate = date.set({'day': 23});
                 // Gilaneh next.jy
                 const next = jalaali.toJalaali(date.year, date.month + 1, date.day)
                 titles.push(`${nextDate.plus({'month': 1}).monthLong} ${next.jy}`);
@@ -409,7 +415,6 @@ const PRECISION_LEVELS_fa = new Map()
             date = jalaaliDate(date)
             const startDates = [date];
 
-//            console.log('getItems', date)
 
             if (additionalMonth) {
                 // Gilaneh 1 > 2
@@ -419,6 +424,7 @@ const PRECISION_LEVELS_fa = new Map()
 
 //                const monthRange = [date.startOf("month"), date.endOf("month")];
                 const monthRange = jalaaliDateRange(date);
+            console.log('monthRange', monthRange)
                 /** @type {WeekItem[]} */
                 const weeks = [];
 
@@ -569,13 +575,13 @@ patch(DateTimePicker.prototype,{
         maxDate: { type: [NULLABLE_DATETIME_PROPERTY, { value: "today" }], optional: true },
         maxPrecision: {
         // Gilaneh
-            type: session.user_context.lang == 'fa_IR' ? [...PRECISION_LEVELS_fa.keys()].map((value) => ({ value })) : [...PRECISION_LEVELS.keys()].map((value) => ({ value })),
+            type: isFaLang(session) ? [...PRECISION_LEVELS_fa.keys()].map((value) => ({ value })) : [...PRECISION_LEVELS.keys()].map((value) => ({ value })),
             optional: true,
         },
         minDate: { type: [NULLABLE_DATETIME_PROPERTY, { value: "today" }], optional: true },
         minPrecision: {
         // Gilaneh
-            type: session.user_context.lang == 'fa_IR' ? [...PRECISION_LEVELS_fa.keys()].map((value) => ({ value })) : [...PRECISION_LEVELS.keys()].map((value) => ({ value })),
+            type: isFaLang(session) ? [...PRECISION_LEVELS_fa.keys()].map((value) => ({ value })) : [...PRECISION_LEVELS.keys()].map((value) => ({ value })),
             optional: true,
         },
         onSelect: { type: Function, optional: true },
@@ -616,7 +622,7 @@ patch(DateTimePicker.prototype,{
 
     get activePrecisionLevel() {
         // Gilaneh
-        return session.user_context.lang == 'fa_IR' ? PRECISION_LEVELS_fa.get(this.state.precision) : PRECISION_LEVELS.get(this.state.precision);
+        return isFaLang(session) ? PRECISION_LEVELS_fa.get(this.state.precision) : PRECISION_LEVELS.get(this.state.precision);
     },
 
     get isLastPrecisionLevel() {
@@ -774,7 +780,7 @@ patch(DateTimePicker.prototype,{
 //        this.state.focusDate = this.clamp(dateToFocus.startOf("month"));
 
         // Gilaneh
-        if (session.user_context.lang == 'fa_IR'){
+        if (isFaLang(session) && dateToFocus.year < 1600){
             let jdateToFocus = jalaali.toJalaali(dateToFocus.year, dateToFocus.month, dateToFocus.day )
 //            console.log('jdateToFocus',jdateToFocus)
             dateToFocus = DateTime.fromString(`${jdateToFocus.jy}-${jdateToFocus.jm}-1`, JALAALI_FORMAT)
@@ -816,7 +822,7 @@ patch(DateTimePicker.prototype,{
      */
     filterPrecisionLevels(minPrecision, maxPrecision) {
         // Gilaneh
-        const levels = session.user_context.lang == 'fa_IR' ? [...PRECISION_LEVELS_fa.keys()] : [...PRECISION_LEVELS.keys()];
+        const levels = isFaLang(session) ? [...PRECISION_LEVELS_fa.keys()] : [...PRECISION_LEVELS.keys()];
         return levels.slice(levels.indexOf(minPrecision), levels.indexOf(maxPrecision) + 1);
     },
 
@@ -997,7 +1003,7 @@ patch(DateTimePicker.prototype,{
      * @param {DateItem} dateItem
      */
     zoomOrSelect(dateItem) {
-//        console.log('zoomOrSelect', dateItem)
+        console.log('zoomOrSelect', dateItem)
         if (!dateItem.isValid) {
             // Invalid item
             return;

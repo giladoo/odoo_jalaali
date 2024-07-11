@@ -12,6 +12,7 @@ function isValidDate(date) {
     return date && date.isValid && Dates.isInRange(date, [Dates.MIN_VALID_DATE, Dates.MAX_VALID_DATE]);
 }
 
+
 patch(Dates, {
     formatDate(value, options = {}) {
         if (!value) {
@@ -19,7 +20,8 @@ patch(Dates, {
         }
         const format = options.format || localization.dateFormat;
         // Gilaneh
-        if(session.user_context.lang == 'fa_IR' && value.year > 1600){
+        let isFaLang = session.lang_url_code && session.lang_url_code == 'fa' || session.user_context && session.user_context.lang == 'fa_IR'
+        if( isFaLang && value.year > 1600){
             return value.setZone("default").reconfigure({ outputCalendar: "persian" }).setLocale("fa").toFormat(format);
         }
         return value.toFormat(format);
@@ -31,7 +33,9 @@ patch(Dates, {
         const format = options.format || localization.dateTimeFormat;
 
             // Gilaneh
-        if(session.user_context.lang == 'fa_IR' && value.year > 1600){
+//        console.log('formatDateTimearash', session)
+        let isFaLang = session.lang_url_code && session.lang_url_code == 'fa' || session.user_context && session.user_context.lang == 'fa_IR'
+        if( isFaLang && value.year > 1600){
             return value.setZone("default").reconfigure({ outputCalendar: "persian" }).setLocale("fa").toFormat(format);
         }
         return value.setZone("default").toFormat(format);
@@ -47,10 +51,13 @@ patch(Dates, {
         }
         let result = super.parseDateTime(...arguments)
             // Gilaneh
-        if(session.user_context.lang == 'fa_IR' && result.year < 1600){
+        let isFaLang = session.lang_url_code && session.lang_url_code == 'fa' || session.user_context && session.user_context.lang == 'fa_IR'
+
+        if( isFaLang && result.year < 1600){
             const gDate = jalaali.toGregorian(result.year, result.month, result.day)
             result = DateTime.fromString(`${gDate.gy}-${gDate.gm}-${gDate.gd} ${result.hour}:${result.minute}`, 'yyyy-M-d H:m')
         }
+        console.log('parsedatetime:',isFaLang, value.year,  result.year)
         return result.setZone("default");
     },
 
