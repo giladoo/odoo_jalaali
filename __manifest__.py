@@ -1,6 +1,6 @@
 {
     'name': 'Odoo Jalaali',
-    'version': '18.0.1.0.2',
+    'version': '18.0.1.0.3',
     'countries': ['ir'],
     'category': 'Localization',
     'description': 'Jalaali datetime fields and datetime picker.',
@@ -19,6 +19,7 @@
             ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
             ('after', 'web/static/src/core/**/*', 'odoo_jalaali/static/src/core/l10n/dates_fa.js'),
             'odoo_jalaali/static/src/core/datetime/datetime_picker_fa.js',
+            'odoo_jalaali/static/src/css/**/*',
         ],
         'web.assets_backend_lazy': [
             ('after', 'mail/static/src/views/web/activity/**', 'odoo_jalaali/static/src/mail/activity_cell.js'),
@@ -26,6 +27,7 @@
         'web.assets_backend': [
             'odoo_jalaali/static/src/views/remaining_days/remaining_days_field.js',
             'odoo_jalaali/static/src/search/**/*',
+            'odoo_jalaali/static/src/css/**/*',
             ],
         'web.assets_frontend': [
             ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
