@@ -2,14 +2,16 @@ import logging
 
 import jdatetime
 import datetime
-from odoo import models, api
+from odoo import models, api, _
 from odoo.tools import date_utils, get_lang, Query, SQL, sql
+from odoo.exceptions import AccessError, MissingError, ValidationError, UserError
+
 from odoo.osv import expression
-from jdatetimext import j_start, j_end
+from jdatetimext import j_start, j_end, jdatejs
 import pytz
 import babel
 import logging
-
+from icecream import ic
 _logger = models._logger
 
 CUSTOM_READ_GROUP_DISPLAY_FORMAT = {
@@ -122,7 +124,6 @@ def _custom_fa_read_group_format_result(self, rows_dict, lazy_groupby):
 
             row['__domain'] = expression.AND([row['__domain'], additional_domain])
 
-
 @api.model
 def _custom_read_group_format_result(self, rows_dict, lazy_groupby):
     """
@@ -168,12 +169,10 @@ def _custom_read_group_format_result(self, rows_dict, lazy_groupby):
     else:
         return _original_read_group_format_result(self, rows_dict, lazy_groupby)
 
-
 models.BaseModel._read_group_format_result = _custom_read_group_format_result
 
 
 _original_read_group_groupby = models.BaseModel._read_group_groupby
-
 
 def _custom_fa_read_group_groupby(self, groupby_spec: str, query: Query) -> tuple[SQL, list[str]]:
     """ Return a pair (<SQL expression>, [<field names used in SQL expression>])
@@ -226,7 +225,6 @@ def _custom_fa_read_group_groupby(self, groupby_spec: str, query: Query) -> tupl
 
     return sql_expr, [fname]
 
-
 def _custom_read_group_groupby(self, groupby_spec: str, query: Query) -> SQL:
     """ Return <SQL expression> corresponding to the given groupby element.
     The method also checks whether the fields used in the groupby are
@@ -239,5 +237,56 @@ def _custom_read_group_groupby(self, groupby_spec: str, query: Query) -> SQL:
     else:
         return _original_read_group_groupby(self, groupby_spec, query)
 
-
 models.BaseModel._read_group_groupby = _custom_read_group_groupby
+
+
+_original_export_data = models.BaseModel.export_data
+
+
+def _custom_fa_export_data(self, fields_to_export):
+    """ Export fields for selected objects
+
+    This method is used when exporting data via client menu
+
+    :param list fields_to_export: list of fields
+    :returns: dictionary with a *datas* matrix
+    :rtype: dict
+    """
+    if not (self.env.is_admin() or self.env.user.has_group('base.group_allow_export')):
+        raise UserError(_("You don't have the rights to export data. Please contact an Administrator."))
+    fields_to_export = [models.fix_import_export_id_paths(f) for f in fields_to_export]
+    # ic(fields_to_export, self._export_rows(fields_to_export))
+    # it send datetime: ['منوچهر نوروزی', '303', datetime.date(1959, 10, 16)]
+    # field_names: ['name', 'work_phone', 'birthday']
+    datas = self._export_rows(fields_to_export)
+
+    ic([type(rec) for rec in datas[0]])
+    ic(datas)
+
+    def datec(record):
+        n_record = []
+        for rec in record:
+            if isinstance(rec, datetime.datetime) :
+                # todo: it changes all times to 00:00:00; jdatejs needed to be revised.
+                rec = jdatejs(rec, "%Y/%m/%d %H:%M:%S")
+            elif isinstance(rec, datetime.date):
+                rec = jdatejs(rec, "%Y/%m/%d")
+            n_record.append(rec)
+
+        return n_record
+
+    datas = [datec(rec) for rec in datas]
+    ic(datas)
+
+    return {'datas': datas}
+
+
+def _custom_export_data(self, fields_to_export):
+    # TODO:Arash;
+    locale = get_lang(self.env).code
+    if locale == 'fa_IR':
+        return _custom_fa_export_data(self, fields_to_export)
+    else:
+        return _original_export_data(self, fields_to_export)
+
+models.BaseModel.export_data = _custom_export_data
