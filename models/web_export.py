@@ -4,13 +4,12 @@ from odoo.tools.misc import xlsxwriter
 import io
 from odoo.http import content_disposition, request
 from odoo.exceptions import AccessError, MissingError, ValidationError, UserError
-from odoo import models, api, _
+from odoo import models, api, _, http
+
 
 _original_init = ExportXlsxWriter.__init__
 
-
 def _custom_fa_init(self, field_names, row_count):
-    print(f"\n>>>>>>>>>>>>>>>>>>>>\n")
     FONT_NAME = "B Nazanin"
     FONT_CHARSET = 178
     FONT_FAMILY = 0
@@ -44,14 +43,10 @@ def _custom_fa_init(self, field_names, row_count):
 def _custom_init(self, field_names, row_count):
     # TODO:Arash;
     # locale = get_lang(self.env).code
-    locale = 'fa_IR'
+    locale = http.request.env.user.lang
     if locale == 'fa_IR':
-        print(f"\n>>>>>>> _custom_fa_init >>>>>>>>>>>>>\n")
-
         return _custom_fa_init(self, field_names, row_count)
     else:
-        print(f"\n>>>>>>> _original_init >>>>>>>>>>>>>\n")
-
         return _original_init(self, field_names, row_count)
 
 ExportXlsxWriter.__init__ = _custom_init

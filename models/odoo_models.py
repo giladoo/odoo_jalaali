@@ -284,6 +284,8 @@ def _custom_fa_export_data(self, fields_to_export):
 def _custom_export_data(self, fields_to_export):
     # TODO:Arash;
     locale = get_lang(self.env).code
+    print(f"\n_custom_export_data self: {self} \n")
+
     if locale == 'fa_IR':
         return _custom_fa_export_data(self, fields_to_export)
     else:
