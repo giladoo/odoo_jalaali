@@ -260,8 +260,8 @@ def _custom_fa_export_data(self, fields_to_export):
     # field_names: ['name', 'work_phone', 'birthday']
     datas = self._export_rows(fields_to_export)
 
-    ic([type(rec) for rec in datas[0]])
-    ic(datas)
+    # ic([type(rec) for rec in datas[0]])
+    # ic(datas)
 
     def datec(record):
         n_record = []
@@ -276,7 +276,7 @@ def _custom_fa_export_data(self, fields_to_export):
         return n_record
 
     datas = [datec(rec) for rec in datas]
-    ic(datas)
+    # ic(datas)
 
     return {'datas': datas}
 
