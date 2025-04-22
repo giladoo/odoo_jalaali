@@ -29,6 +29,9 @@
             'odoo_jalaali/static/src/search/**/*',
             'odoo_jalaali/static/src/css/**/*',
             ],
+        'web.report_assets_common': [
+            'odoo_jalaali/static/src/css/**/*',
+            ],
         'web.assets_frontend': [
             ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
             ('after', 'web/static/src/core/**/*', 'odoo_jalaali/static/src/core/l10n/dates_fa.js'),
