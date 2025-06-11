@@ -1,8 +1,4 @@
 /** @odoo-module **/
-console.log('aaaaaa')
-
-
-/** @odoo-module **/
 
 const webSearchUtilsDatesModule = {};
 const webCoreL10NDatesModule = {}

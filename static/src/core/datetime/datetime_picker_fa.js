@@ -130,6 +130,8 @@ const jGetStartOfCentury = (date) => Math.floor(jalaali.toJalaali(date.year, 3, 
  * @returns {DateTime}
  */
 const jalaaliDate = (date) => {
+//        console.log('jalaaliDate')
+
         if (isFaLang(session) && date.year < 1600){
             const gDate = jalaali.toGregorian(date.year, date.month, date.day)
             date = DateTime.fromString(`${gDate.gy}-${gDate.gm}-${gDate.gd}`, JALAALI_FORMAT)
@@ -138,6 +140,7 @@ const jalaaliDate = (date) => {
     }
 
 const jalaaliDateRange = (date, duration='month') => {
+//        console.log('jalaaliDateRange')
         let gDateStart;
         let gDateEnd;
         let jDate = jalaali.toJalaali(date.year, date.month, date.day)
@@ -450,24 +453,21 @@ const PRECISION_LEVELS_fa = new Map()
             }
             return titles;
         },
-        getItems: (
-            date,
-            { additionalMonth, maxDate, minDate, showWeekNumbers, isDateValid, dayCellClass }
-        ) => {
-
+        getItems: (date, { additionalMonth, maxDate, minDate, showWeekNumbers, isDateValid, dayCellClass }
+            ) => {
             date = jalaaliDate(date)
             const startDates = [date];
-
-//            console.log('getItems', date.toISODate())
-
             if (additionalMonth) {
                 // Giladoo 1 > 2
-                startDates.push(startDates[0].plus({ month: 1 }));
+//                startDates.push(startDates[0].plus({ month: 1 }));
+                const nextDate = jalaali.monthInterval(date, 1, DateTime).start
+                startDates.push(nextDate);
             }
             return startDates.map((date, i) => {
-
+//                console.log(date.toISODate(), i)
 //                const monthRange = [date.startOf("month"), date.endOf("month")];
                 const monthRange = jalaaliDateRange(date);
+//                console.log('monthRange:', monthRange)
                 /** @type {WeekItem[]} */
                 const weeks = [];
 
@@ -891,9 +891,7 @@ patch(DateTimePicker.prototype,{
             isSelected: !isOutOfRange && isInRange(this.selectedRange, range),
             isSelectStart: false,
             isSelectEnd: false,
-            isHighlighted: !isOutOfRange && isInRange(this.highlightedRange, range),
-            isHighlightStart: false,
-            isHighlightEnd: false,
+            isHighlighted: isInRange(this.state.hoveredDate, range),
             isCurrent: false,
         };
 
@@ -903,19 +901,13 @@ patch(DateTimePicker.prototype,{
                 result.isSelectStart = !selectStart || isInRange(selectStart, range);
                 result.isSelectEnd = !selectEnd || isInRange(selectEnd, range);
             }
-            if (result.isHighlighted) {
-                const [currentStart, currentEnd] = this.highlightedRange;
-                result.isHighlightStart = !currentStart || isInRange(currentStart, range);
-                result.isHighlightEnd = !currentEnd || isInRange(currentEnd, range);
-            }
             result.isCurrent =
                 !isOutOfRange &&
                 (isInRange(this.values[0], range) || isInRange(this.values[1], range));
         } else {
             result.isSelectStart = result.isSelectEnd = result.isSelected;
-            result.isHighlightStart = result.isHighlightEnd = result.isHighlighted;
         }
-//        console.log('getActiveRangeInfo', this.props.range )
+
         return result;
     },
 
@@ -968,13 +960,18 @@ patch(DateTimePicker.prototype,{
         // Giladoo
         const { step } = this.activePrecisionLevel;
         let date = this.state.focusDate
-        if (isFaLang(session) && step['month'] && date.year > 1600){
-            let jdate = jalaali.monthInterval(date, 1, DateTime)
-//            console.log('next:', jdate.start.toISODate(), jdate.end.toISODate())
-            this.state.focusDate = this.clamp(jdate.start);
-        }else{
-            this.state.focusDate = this.clamp(this.state.focusDate.plus(step));
-        }
+        console.log('next 0:', step, isFaLang(session))
+        console.log('next 1:', this.state.focusDate.toISODate())
+        this.state.focusDate = this.clamp(this.state.focusDate.plus(step));
+        console.log('next 2:', this.state.focusDate.toISODate())
+
+//        if (isFaLang(session) && step['month'] && date.year < 1600){
+//            let jdate = jalaali.monthInterval(date, 1, DateTime)
+//            console.log('next 2:', jdate)
+//            this.state.focusDate = this.clamp(jdate.start);
+//        }else{
+//            this.state.focusDate = this.clamp(this.state.focusDate.plus(step));
+//        }
     },
 
     /**
