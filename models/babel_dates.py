@@ -3,7 +3,6 @@ from babel.dates import DateTimeFormat, UTC
 import babel.dates as babel_dates
 from babel.core import Locale
 from datetime import datetime, date, time
-import khayyam
 import jdatetime
 import logging
 
@@ -19,12 +18,10 @@ def date_time_format__init__(self, value, locale):
         if isinstance(value, datetime):
 
             # TODO:Arash; Make sure jdatetime is working properly
-            # self.value = khayyam.JalaliDatetime(value)
             self.value = jdatetime.datetime.fromgregorian(date=value)
         elif isinstance(value, date):
 
             # TODO:Arash; Make sure jdatetime is working properly
-            # self.value = khayyam.JalaliDate(value)
             self.value = jdatetime.date.fromgregorian(date=value)
         elif isinstance(value, time):
             self.value = value

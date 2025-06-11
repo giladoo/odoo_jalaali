@@ -468,7 +468,7 @@ const PRECISION_LEVELS_fa = new Map()
             if (additionalMonth) {
                 // Giladoo 1 > 2
 //                startDates.push(startDates[0].plus({ month: 1 }));
-                startDates.push(jalaali.monthInterval(startDates[0], 2, DateTime).start);
+                startDates.push(jalaali.monthInterval(startDates[0], 1, DateTime).start);
             }
             return startDates.map((date, i) => {
 

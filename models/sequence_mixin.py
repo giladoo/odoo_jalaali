@@ -1,4 +1,4 @@
-import khayyam
+# import khayyam
 from datetime import date
 from odoo.addons.account.models.sequence_mixin import SequenceMixin
 from odoo.exceptions import ValidationError
