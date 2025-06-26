@@ -18,7 +18,6 @@ import { localization } from "@web/core/l10n/localization";
 import { ensureArray } from "@web/core/utils/arrays";
 
 const { DateTime, Info } = luxon;
-
 /**
  * @typedef DateItem
  * @property {string} id
@@ -960,10 +959,10 @@ patch(DateTimePicker.prototype,{
         // Giladoo
         const { step } = this.activePrecisionLevel;
         let date = this.state.focusDate
-        console.log('next 0:', step, isFaLang(session))
-        console.log('next 1:', this.state.focusDate.toISODate())
+//        console.log('next 0:', step, isFaLang(session))
+//        console.log('next 1:', this.state.focusDate.toISODate())
         this.state.focusDate = this.clamp(this.state.focusDate.plus(step));
-        console.log('next 2:', this.state.focusDate.toISODate())
+//        console.log('next 2:', this.state.focusDate.toISODate())
 
 //        if (isFaLang(session) && step['month'] && date.year < 1600){
 //            let jdate = jalaali.monthInterval(date, 1, DateTime)

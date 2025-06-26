@@ -1,6 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jalaali = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /*
-  Giladoo
+  version 1.2.8
   Expose functions.
 */
 module.exports =
@@ -16,9 +16,10 @@ module.exports =
   , d2g: d2g
   , jalaaliToDateObject: jalaaliToDateObject
   , jalaaliWeek: jalaaliWeek
-  , jalaaliWeekNumber: jalaaliWeekNumber
-  , start_end_j: start_end_j
+   , jalaaliWeekNumber: jalaaliWeekNumber
   , monthInterval: monthInterval
+  , startOf: startOf
+   , start_end_j: start_end_j
   }
 
 /*
@@ -311,7 +312,6 @@ function jalaaliWeek(jy, jm, jd) {
     friday: d2j(j2d(jy, jm, jd+endDayDifference))
   }
 }
-
 /**
  * Giladoo
  * Convert Jalaali calendar dates to jalaali week number
@@ -330,32 +330,84 @@ function jalaaliWeekNumber(jy, jm, jd){
   }
   return weekNumber
 }
-
 const JALAALI_FORMAT = 'yyyy-M-d'
 const JALAALI_DataTime_FORMAT = 'yyyy-M-d H:m:s'
-function start_end_j(date_type='day',  date_value){
+function start_end_j(date_type='day',  date_value, output='object'){
 //    let DateTime = luxon.DateTime;
 //    const { DateTime, Info } = luxon;
+    if (Object.prototype.toString.call(date_value) === '[object Date]') {
+        gd = date_value.getDate()
+        gm = date_value.getMonth()
+        gy = date_value.getFullYear()
+    }else{
+        gd = date_value.day
+        gm = date_value.month
+        gy = date_value.year
+    }
     var start_date;
     var end_date;
     // console.log(date_type, jalaali.toJalaali(date_value.year, date_value.month, date_type.day))
-    if (date_type == 'month'){
-        start_date = jalaali.toJalaali(date_value.year, date_value.month, date_value.day)
-        end_date = jalaali.toJalaali(date_value.year, date_value.month, date_value.day)
+    let jdate =  jalaali.toJalaali(gy, gm, gd)
+    if (date_type == 'day'){
+        start_date = jalaali.toJalaali(gy, gm, gd)
+        end_date = jalaali.toJalaali(gy, gm, gd)
+    } else if (date_type == 'month'){
+        start_date = jalaali.toJalaali(gy, gm, gd)
         start_date.jd = 1
+        end_date = jalaali.toJalaali(gy, gm, gd)
         end_date.jd = jalaali.jalaaliMonthLength(end_date.jy, end_date.jm)
-    } else{
-        start_date = jalaali.toJalaali(date_value.year, date_value.month, date_value.day)
-        // res =
+    } else if (date_type == 'year'){
+        start_date = jdate
+        start_date.jd = 1
+        start_date.jm = 1
+
+        end_date = jdate
+        end_date.jm = 12
+        end_date.jd = jalaali.jalaaliMonthLength(end_date.jy, end_date.jm)
     }
-    start_date = jalaali.toGregorian(start_date.jy, start_date.jm, start_date.jd)
-//    start_date = DateTime.fromString(`${jDate_start.gy}-${jDate_start.gm}-${jDate_start.gd}`, JALAALI_FORMAT)
-    end_date = jalaali.toGregorian(end_date.jy, end_date.jm, end_date.jd)
-//    end_date = DateTime.fromString(`${jDate_end.gy}-${jDate_end.gm}-${jDate_end.gd}`, JALAALI_FORMAT)
+    else{
+        start_date = jalaali.toJalaali(gy, gm, gd)
+    }
+        start_date = jalaali.toGregorian(start_date.jy, start_date.jm, start_date.jd)
+        end_date = jalaali.toGregorian(end_date.jy, end_date.jm, end_date.jd)
 
-    return {0: start_date, 1: end_date}
+    if(output == 'date'){
+        start_date = new Date(start_date.gy, start_date.gm, start_date.gd)
+        end_date = new Date(end_date.gy, end_date.gm, end_date.gd)
+    }
+
+    return {start: start_date, end: end_date}
 }
-
+function startOf(m, unit) {
+            if (unit === 'year') {
+                return this.startOfYear(m);
+            }
+            if (unit === 'month') {
+                return startOfMonth(m);
+            }
+            if (unit === 'week') {
+                return this.startOfWeek(m);
+            }
+            if (unit === 'day') {
+                return startOfDay(m);
+            }
+            if (unit === 'hour') {
+                return startOfHour(m);
+            }
+            if (unit === 'minute') {
+                return startOfMinute(m);
+            }
+            if (unit === 'second') {
+                return startOfSecond(m);
+            }
+            return null;
+        }
+function startOfMonth(g){
+        let jdd = toJalaali(g.getFullYear(), g.getMonth(), g.getDate())
+        let gdd = toGregorian(jdd.jy, jdd.jm, 1 )
+//        console.log(g.getFullYear(), g.getMonth(), g.getDate(), jdd, gdd)
+        return new Date(gdd.gy, gdd.gm, gdd.gd)
+}
 function monthInterval(gregorianDate, monthInterval, DateTime) {
     // Convert the Gregorian date to a Jalaali date
     const jalaaliDate = toJalaali(gregorianDate.year, gregorianDate.month, gregorianDate.day);
@@ -373,7 +425,6 @@ function monthInterval(gregorianDate, monthInterval, DateTime) {
         newMonth += 12;
         newYear--;
     }
-
     // Get the first day of the new month
     const firstDay = toGregorian(newYear, newMonth, 1);
 
@@ -395,6 +446,8 @@ function monthInterval(gregorianDate, monthInterval, DateTime) {
         end: DateTime.fromObject({ year: lastDay.gy, month: lastDay.gm , day: lastDay.gd }),
     };
 }
+
+
 /**
  * Convert Jalaali calendar dates to javascript Date object
  * @param {number} jy jalaali year
@@ -444,4 +497,3 @@ function mod(a, b) {
 module.exports = require('./index.js');
 },{"./index.js":1}]},{},[2])(2)
 });
-
