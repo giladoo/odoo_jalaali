@@ -1,6 +1,6 @@
 /** @odoo-module **/
 import { patch } from "@web/core/utils/patch";
-import { CalendarCommonRenderer } from "@web/views/calendar/calendar_common/calendar_common_renderer.js";
+import { CalendarCommonRenderer } from "@web/views/calendar/calendar_common/calendar_common_renderer";
 import { formatDate } from "@web/core/l10n/dates";
 
 const { DateTime } = luxon;
