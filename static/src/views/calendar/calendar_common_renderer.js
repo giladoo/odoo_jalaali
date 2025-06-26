@@ -5,7 +5,7 @@ import { formatDate } from "@web/core/l10n/dates";
 
 const { DateTime } = luxon;
 
-patch(CalendarCommonRenderer, {
+patch(CalendarCommonRenderer.prototype, {
     headerTemplateProps(date) {
         const scale = this.props.model.scale;
         // when rendering months, FullCalendar uses a date w/out tz
