@@ -19,7 +19,7 @@
             ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
             ('after', 'web/static/src/core/**/*', 'odoo_jalaali/static/src/core/l10n/dates_fa.js'),
             'odoo_jalaali/static/src/core/datetime/datetime_picker_fa.js',
-            # 'odoo_jalaali/static/src/core/calendar/calendar_common_renderer.js',
+            'odoo_jalaali/static/src/core/calendar/calendar_common_renderer.js',
             'odoo_jalaali/static/src/css/**/*',
         ],
         'web.assets_backend_lazy': [
