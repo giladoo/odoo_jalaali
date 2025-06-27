@@ -405,7 +405,7 @@ function startOf(m, unit) {
 function startOfMonth(g){
         let jdd = toJalaali(g.getFullYear(), g.getMonth(), g.getDate())
         let gdd = toGregorian(jdd.jy, jdd.jm, 1 )
-//        console.log(g.getFullYear(), g.getMonth(), g.getDate(), jdd, gdd)
+//        console.log('startOfMonth', g.getFullYear(), g.getMonth(), g.getDate(),'\n', jdd, '\n', gdd)
         return new Date(gdd.gy, gdd.gm, gdd.gd)
 }
 function monthInterval(gregorianDate, monthInterval, DateTime) {

@@ -880,20 +880,16 @@ var FullCalendar = (function (exports) {
         return new Date(a[0], a[1] || 0, a[2] == null ? 1 : a[2], // day of month
         a[3] || 0, a[4] || 0, a[5] || 0);
     }
-    function arrayToLocalDate(a) {
-        return new Date(a[0], a[1] || 0, a[2] == null ? 1 : a[2], // day of month
-        a[3] || 0, a[4] || 0, a[5] || 0);
-    }
     function dateToUtcArray(date) {
-        return [
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate(),
-            date.getUTCHours(),
-            date.getUTCMinutes(),
-            date.getUTCSeconds(),
-            date.getUTCMilliseconds(),
-        ];
+            return [
+                date.getUTCFullYear(),
+                date.getUTCMonth(),
+                date.getUTCDate(),
+                date.getUTCHours(),
+                date.getUTCMinutes(),
+                date.getUTCSeconds(),
+                date.getUTCMilliseconds(),
+            ];
     }
     // Giladoo
     function jDateToUtcArray(date) {
@@ -914,22 +910,35 @@ var FullCalendar = (function (exports) {
         if (a.length === 1) {
             a = a.concat([0]);
         }
-//                console.log('array:', a, new Date(Date.UTC(...a)))
-
         return new Date(Date.UTC(...a));
     }
     function jArrayToUtcDate(a) {
         // according to web standards (and Safari), a month index is required.
         // massage if only given a year.
+//        console.log('jArrayToUtcDate', a)
         if (a.length === 1) {
-            a = a.concat([1, 1, 0, 0, 0, 0]);
+            a = a.concat([1, 1]);
         }
-        let gd = jalaali.toGregorian(a[0], a[1], a[2],)
-        a[0] = gd.gy;
-        a[1] = gd.gm;
-        a[2] = gd.gd;
-        a[3] = 3;
-        a[4] = 30;
+        if (a[0] < 1600){
+            let gd = jalaali.toGregorian(a[0], a[1], a[2],)
+            a[0] = gd.gy;
+            a[1] = gd.gm;
+            a[2] = gd.gd;
+    //        a[3] = 3;
+    //        a[4] = 30;
+
+        } else {
+        // find jalali date
+        // find first day of month
+            let jd = jalaali.toJalaali(a[0], a[1], a[2],)
+//            console.log('jArrayToUtcDate\n', a, '\n', jd)
+            let gd = jalaali.toGregorian(jd.jy, jd.jm, jd.jd)
+           a[0] = gd.gy;
+            a[1] = gd.gm;
+            a[2] = gd.gd;
+
+        // find the gregorian date
+        }
 //        console.log('jArray:', a, new Date(Date.UTC(...a)))
         return new Date(Date.UTC(...a));
     }
@@ -1411,6 +1420,7 @@ var FullCalendar = (function (exports) {
         format(date, context, betterDefaultSeparator) {
             return this.func(createVerboseFormattingArg(date, null, context, betterDefaultSeparator));
         }
+
         formatRange(start, end, context, betterDefaultSeparator) {
             return this.func(createVerboseFormattingArg(start, end, context, betterDefaultSeparator));
         }
@@ -3343,13 +3353,13 @@ var FullCalendar = (function (exports) {
             let activeRange;
             let isValid;
             validRange = this.buildValidRange();
-//            console.log('build:\n', validRange)
             validRange = this.trimHiddenDays(validRange);
+//            console.log('build:\n', validRange)
             if (forceToValid) {
                 currentDate = constrainMarkerToRange(currentDate, validRange);
             }
+//            console.log('currentDate:', currentDate)
             currentInfo = this.buildCurrentRangeInfo(currentDate, direction);
-//            console.log('currentInfo:', currentInfo)
 
             isRangeAllDay = /^(year|month|week|day)$/.test(currentInfo.unit);
             renderRange = this.buildRenderRange(this.trimHiddenDays(currentInfo.range), currentInfo.unit, isRangeAllDay);
@@ -3412,8 +3422,7 @@ var FullCalendar = (function (exports) {
         // See build() for a description of `direction`.
         // Guaranteed to have `range` and `unit` properties. `duration` is optional.
         buildCurrentRangeInfo(date, direction) {
-//            console.log('buildCurrentRangeInfo:', date, direction)
-
+//            console.log('^^^^^^^^^^ buildCurrentRangeInfo 11111 ^^^^^^^^^^^')
             let { props } = this;
             let duration = null;
             let unit = null;
@@ -3436,6 +3445,13 @@ var FullCalendar = (function (exports) {
                 unit = greatestDurationDenominator(duration).unit;
                 range = this.buildRangeFromDuration(date, direction, duration, unit);
             }
+//            console.log('buildCurrentRangeInfo:\n Start:', jalaali.toJalaali(range.start), range.start.toLocaleString(),
+//             '\n   End:', jalaali.toJalaali(range.end), range.end.toLocaleString())
+//             if (this.props.dateEnv.locale.codeArg == 'fa-IR' && unit == 'month'){
+//                console.log('date:', date.toLocaleString())
+//             }
+//            console.log('^^^^^^^^^^ buildCurrentRangeInfo 22222 ^^^^^^^^^^^', this, duration, unit)
+
             return { duration, unit, range };
         }
         getFallbackDuration() {
@@ -3464,9 +3480,10 @@ var FullCalendar = (function (exports) {
         // Builds the "current" range when it is specified as an explicit duration.
         // `unit` is the already-computed greatestDurationDenominator unit of duration.
         buildRangeFromDuration(date, direction, duration, unit) {
-//            console.log('buildRangeFromDuration', date, typeof date, direction, duration, unit)
-//            console.log('buildRangeFromDuration', date, direction, duration, unit)
+//            console.log('buildRangeFromDuration\n', date, '\n', direction,'\n', duration,'\n', unit,'\n',)
+//            console.log('buildRangeFromDuration', duration,)
             const JALAALI_DataTime_FORMAT = 'yyyy-M-d H:m:s'
+//            console.log('NNNNNNNN buildRangeFromDuration 11111 NNNNNNNN')
 
             let { dateEnv, dateAlignment } = this.props;
             let start;
@@ -3507,31 +3524,26 @@ var FullCalendar = (function (exports) {
                 }
             }
             function computeRes() {
-                if (dateEnv.locale.codeArg == 'fa-IR1' ){
-//                    console.log('dateAlignment 1:', dateAlignment)
+                if (dateEnv.locale.codeArg == 'fa-IR' ){
                     if(dateAlignment == 'month'){
+                        let jDate = jalaali.toJalaali(date)
+                        gDateStart = jalaali.jalaaliToDateObject(jDate.jy, jDate.jm, 1, 3,30,0,0)
+                        gDateEnd = jDate.jm < 12 ? jalaali.jalaaliToDateObject(jDate.jy, jDate.jm + 1, 1 ,3,30,0,0)
+                                                : jalaali.jalaaliToDateObject(jDate.jy + 1, 1, 1 ,3,30,0,0)
 
-//                        gDateStart = jalaali.toGregorian(jDate.jy, jDate.jm, 1)
-    //                    gDateEnd = jalaali.toGregorian(jDate.jy, jDate.jm, jalaali.jalaaliMonthLength(jDate.jy, jDate.jm) + 1)
-//                        gDateEnd = jalaali.toGregorian(jDate.jy, jDate.jm + 1, 1)
-//                        console.log('aaaaaaaaaaaa\n', jalaali.start_end_j('month', date, 'date' ))
+//                        console.log('      date:', date.toLocaleString(),)
+//
+//                        console.log('      jDate:', jDate,)
+//                        console.log('      jDate:', jDate.jy, jDate.jm, 1,)
+//                        console.log('gDateStart:', gDateStart,)
+//                        console.log(' startDate:', startDate.toLocaleString(),)
+//                        console.log(' startDate:', duration,)
+//                        start = dateEnv.toDate(gDateStart)
+                        end = dateEnv.toDate(gDateEnd)
+                        start = dateEnv.startOf(gDateStart, 'day');
+//                        end = dateEnv.startOf(gDateEnd, 'day');
+                        res = { start, end };
 
-//                        const startDate = new Date(gDateStart.gy, gDateStart.gm, gDateStart.gd,3,30,0)
-//                        const endDate = new Date(gDateEnd.gy, gDateEnd.gm, gDateEnd.gd,23,59,59)
-//                        const endDate = new Date(gDateEnd.gy, gDateEnd.gm, gDateEnd.gd,3,30,0)
-
-//                        console.log(jDate.jy, jDate.jm , 1 )
-//                        console.log(jDate.jy, jDate.jm + 1, 1 )
-//                        console.log('endDate 1:\n', Object.prototype.toString.call(startDate))
-//                        start = dateEnv.toDate(startDate)
-//                        console.log('endDate 2:\n', Object.prototype.toString.call(start))
-
-//                        end = dateEnv.toDate(endDate)
-//                        start = dateEnv.startOf(startDate, 'day');
-//                        end = dateEnv.startOf(endDate, 'day');
-//                        res = { start, end };
-                          res = jalaali.start_end_j('month', date, 'date' )
-//                        console.log('res:', res)
                     } else if(dateAlignment == 'year'){
                         gDateStart = jalaali.toGregorian(jDate.jy, 1, 1)
     //                    gDateEnd = jalaali.toGregorian(jDate.jy, jDate.jm, jalaali.jalaaliMonthLength(jDate.jy, jDate.jm) + 1)
@@ -3562,6 +3574,8 @@ var FullCalendar = (function (exports) {
                 date = this.skipHiddenDays(date, direction);
                 computeRes();
             }
+//            console.log('res\n Start:', res.start.toLocaleString(), '\n   End:', res.end.toLocaleString())
+//            console.log('NNNNNNNN buildRangeFromDuration  22222 NNNNNNNN')
             return res;
         }
         // Builds the "current" range when a dayCount is specified.
@@ -3570,6 +3584,7 @@ var FullCalendar = (function (exports) {
             let runningCount = 0;
             let start = date;
             let end;
+
             if (dateAlignment) {
                 start = dateEnv.startOf(start, dateAlignment);
             }
@@ -4590,12 +4605,15 @@ var FullCalendar = (function (exports) {
             return d.getUTCDate();
         }
         arrayToMarker(arr) {
+            return jArrayToUtcDate(arr);
             return arrayToUtcDate(arr);
         }
         jArrayToMarker(arr) {
             return jArrayToUtcDate(arr);
         }
         markerToArray(marker) {
+//            console.log('markerToArray\n @@@@@@@@@@@@@@@@@@@@@@@\n', marker);
+            return jDateToUtcArray(marker);
             return dateToUtcArray(marker);
         }
         jMarkerToArray(marker) {
@@ -4741,20 +4759,32 @@ var FullCalendar = (function (exports) {
             }
         }
         subtract(marker, dur) {
-            let a = this.calendarSystem.markerToArray(marker);
-            a[0] -= dur.years;
-            a[1] -= dur.months;
-            a[2] -= dur.days;
-            a[6] -= dur.milliseconds;
-            return this.calendarSystem.arrayToMarker(a);
+            // Giladoo
+//            console.log('subtract\n @@@@@@@@@@@@@@@@@@@@@@@\n', n);
+            if(this.locale.codeArg == 'fa-IR'){
+                let a = this.calendarSystem.jMarkerToArray(marker);
+                a[0] -= dur.years;
+                a[1] -= dur.months;
+                a[2] -= dur.days;
+                a[6] -= dur.milliseconds;
+                return this.calendarSystem.jArrayToMarker(a);
+            }else{
+                let a = this.calendarSystem.markerToArray(marker);
+                a[0] -= dur.years;
+                a[1] -= dur.months;
+                a[2] -= dur.days;
+                a[6] -= dur.milliseconds;
+                return this.calendarSystem.arrayToMarker(a);
+            }
         }
         addYears(marker, n) {
+//            console.log('addYears\n @@@@@@@@@@@@@@@@@@@@@@@\n', n);
             let a = this.calendarSystem.markerToArray(marker);
             a[0] += n;
             return this.calendarSystem.arrayToMarker(a);
         }
         addMonths(marker, n) {
-//            console.log('addMonths', marker, n)
+//            console.log('addMonths\n @@@@@@@@@@@@@@@@@@@@@@@\n', n);
             let a = this.calendarSystem.markerToArray(marker);
             a[1] += n;
             return this.calendarSystem.arrayToMarker(a);
@@ -4867,9 +4897,7 @@ var FullCalendar = (function (exports) {
         startOfMonth(m) {
             // Giladoo
             if(this.locale.codeArg == 'fa-IR'){
-//                console.log('startOfMonth', Object.prototype.toString.call(m));
                 const day = jalaali.startOf(m, 'month')
-//                console.log('startOfMonth', day);
                 return this.calendarSystem.arrayToMarker([
                     this.calendarSystem.getMarkerYear(m),
                     this.calendarSystem.getMarkerMonth(m),
@@ -4908,10 +4936,12 @@ var FullCalendar = (function (exports) {
             }, this);
         }
         formatRange(start, end, formatter, dateOptions = {}) {
+//        console.log('formatRange\n @@@@@@@@@@@@ 1 @@@@@@@@@@@@@@@\n', this.locale.codeArg,start, end, dateOptions)
+
             if (dateOptions.isEndExclusive) {
                 end = addMs(end, -1);
             }
-            return formatter.formatRange({
+            const res = formatter.formatRange({
                 marker: start,
                 timeZoneOffset: dateOptions.forcedStartTzo != null ?
                     dateOptions.forcedStartTzo :
@@ -4922,6 +4952,9 @@ var FullCalendar = (function (exports) {
                     dateOptions.forcedEndTzo :
                     this.offsetForMarker(end),
             }, this, dateOptions.defaultSeparator);
+//                    console.log('formatRange\n @@@@@@@@@@@@ 2 @@@@@@@@@@@@@@@\n', res)
+
+            return res
         }
         /*
         DUMB: the omitTime arg is dumb. if we omit the time, we want to omit the timezone offset. and if we do that,
@@ -4950,6 +4983,7 @@ var FullCalendar = (function (exports) {
             return arrayToUtcDate(this.namedTimeZoneImpl.timestampToArray(ms));
         }
         offsetForMarker(m) {
+//            console.log('offsetForMarker\n @@@@@@@@@@@@@@@@@@@@@@@@@@@', this.locale.codeArg)
             if (this.timeZone === 'local') {
                 return -arrayToLocalDate(dateToUtcArray(m)).getTimezoneOffset(); // convert "inverse" offset to "normal" offset
             }
@@ -9018,6 +9052,7 @@ var FullCalendar = (function (exports) {
         else { // for day units or smaller, use the actual day range
             range = dateProfile.activeRange;
         }
+//        console.log('$$$$$$$$$$$$$ buildTitle $$$$$$$$$$$$$$$$')
         return dateEnv.formatRange(range.start, range.end, createFormatter(viewOptions.titleFormat || buildTitleFormat(dateProfile)), {
             isEndExclusive: dateProfile.isRangeAllDay,
             defaultSeparator: viewOptions.titleRangeSeparator,
@@ -9129,6 +9164,8 @@ var FullCalendar = (function (exports) {
                 this.emitter.trigger('loading', true); // NOT DRY
             }
             this.state = initialState;
+//            console.log('########## constructor ##########')
+
             this.updateData();
             this.actionRunner.resume();
         }
@@ -9222,7 +9259,9 @@ var FullCalendar = (function (exports) {
             }
         }
         updateData() {
+//            console.log('########## CalendarDataManager ##########')
             let { props, state } = this;
+//            console.log('state.dateProfile', state.dateProfile)
             let oldData = this.data;
             let optionsData = this.computeOptionsData(props.optionOverrides, state.dynamicOptionOverrides, props.calendarApi);
             let currentViewData = this.computeCurrentViewData(state.currentViewType, optionsData, props.optionOverrides, state.dynamicOptionOverrides);

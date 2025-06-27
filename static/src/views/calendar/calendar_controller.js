@@ -70,6 +70,9 @@ patch( CalendarController.prototype, {
                 if (isFaLang(session) && this.model.scale == 'month' ){
                 // TODO:Giladoo; 1395/04 jumps to 1395/02. next month direction is ok, previous has this problem.
                     date = jalaali.monthInterval(this.model.date, 1, luxon.DateTime).start
+                } else if (isFaLang(session) && this.model.scale == 'year1' ){
+                    date = jalaali.monthInterval(this.model.date, 1, luxon.DateTime).start
+
                 } else {
                     date = this.model.date.plus({ [`${this.model.scale}s`]: 1 });
                 }
@@ -89,7 +92,7 @@ patch( CalendarController.prototype, {
                 }
                 break;
         }
-//        console.log('setDate', move, this.model.date.toISODate(), date.toISODate(), this.model.scale, isFaLang(session) && this.model.scale == 'month')
+//        console.log('setDate', move, this.model.date.toString(), date.toString(),)
 
         await this.model.load({ date });
     }
