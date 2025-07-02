@@ -3553,6 +3553,7 @@ var FullCalendar = (function (exports) {
                         const endDate = new Date(gDateEnd.gy, gDateEnd.gm, gDateEnd.gd,23,59,59)
                         start = dateEnv.startOf(startDate, 'day');
                         end = dateEnv.startOf(endDate, 'day');
+
                         res = { start, end };
                     } else{
 //                        console.log('>>>>>>>>>>>>>>>>>>>', dateAlignment)
@@ -3567,7 +3568,7 @@ var FullCalendar = (function (exports) {
                 }
             }
             computeRes();
-//            console.log('res:\n', res.end)
+//            console.log('res:\n', res.end.toLocaleString())
             // if range is completely enveloped by hidden days, go past the hidden days
             if (!this.trimHiddenDays(res)) {
 //                console.log('start 4:',)
