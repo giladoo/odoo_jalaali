@@ -18,8 +18,10 @@
     'assets': {
         'web._assets_core': [
             ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
+            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-luxon.js'),
             ('after', 'web/static/src/core/**/*', 'odoo_jalaali/static/src/core/l10n/dates_fa.js'),
             'odoo_jalaali/static/src/core/datetime/datetime_picker_fa.js',
+            'odoo_jalaali/static/src/views/calendar/calendar_model.js',
             'odoo_jalaali/static/src/views/calendar/calendar_common_renderer.js',
             'odoo_jalaali/static/src/views/calendar/calendar_year_renderer.js',
             'odoo_jalaali/static/src/views/calendar/calendar_controller.js',

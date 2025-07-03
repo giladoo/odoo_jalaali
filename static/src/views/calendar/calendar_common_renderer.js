@@ -20,6 +20,13 @@ patch(CalendarCommonRenderer.prototype, {
             day: localDay,
             scale,
         };
+    },
+    getDayCellClassNames(info) {
+        const date = luxon.DateTime.fromJSDate(info.date).toISODate();
+//        console.log('cell:', this)
+        if (this.props.model.unusualDays.includes(date)) {
+            return ["o_calendar_disabled"];
+        }
+        return [];
     }
-
 })
