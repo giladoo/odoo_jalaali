@@ -46,7 +46,7 @@ patch( CalendarModel.prototype, {
 
         start = start.startOf("day");
         end = end.endOf("day");
-//        console.log('computeRange\n', start.toLocaleString(), end.toLocaleString())
+        console.log('computeRange\n', start.toLocaleString(), end.toLocaleString())
 
         return { start, end };
     }
