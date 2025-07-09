@@ -10,9 +10,9 @@ patch( CalendarYearRenderer.prototype, {
         // Giladoo
         let propDate = this.props.model.date
         if (isFaLang(session)){
-                const jDate = jalaali.toJalaali(propDate.year, propDate.month, propDate.day, )
-                const gDate = jalaali.jalaaliToDateObject(jDate.jy,this.months.indexOf(month) + 1, 1 )
-                propDate = DateTime.fromJSDate(gDate ).toISO()
+            const jDate = jalaali.toJalaali(propDate.year, propDate.month, propDate.day, )
+            const gDate = jalaali.jalaaliToDateObject(jDate.jy,this.months.indexOf(month) + 1, 1 )
+            propDate = DateTime.fromJSDate(gDate ).toISO()
         } else {
              propDate = this.props.model.date.set({ month: this.months.indexOf(month) + 1 }).toISO()
         }

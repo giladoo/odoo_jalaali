@@ -17,10 +17,13 @@
     'application': False,
     'assets': {
         'web._assets_core': [
-            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
-            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-luxon.js'),
+            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/farvardin/farvardin.js'),
+            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali/jalaali-js.js'),
             ('after', 'web/static/src/core/**/*', 'odoo_jalaali/static/src/core/l10n/dates_fa.js'),
+            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/luxon/luxon_fa.js'),
             'odoo_jalaali/static/src/core/datetime/datetime_picker_fa.js',
+            'odoo_jalaali/static/src/views/calendar/utils.js',
+            'odoo_jalaali/static/src/search/utils/dates.js',
             'odoo_jalaali/static/src/views/calendar/calendar_model.js',
             'odoo_jalaali/static/src/views/calendar/calendar_common_renderer.js',
             'odoo_jalaali/static/src/views/calendar/calendar_year_renderer.js',
@@ -32,14 +35,14 @@
         ],
         'web.assets_backend': [
             'odoo_jalaali/static/src/views/remaining_days/remaining_days_field.js',
-            'odoo_jalaali/static/src/search/**/*',
+            # 'odoo_jalaali/static/src/search/**/*',
             'odoo_jalaali/static/src/css/**/*',
             ],
         'web.report_assets_common': [
             'odoo_jalaali/static/src/css/**/*',
             ],
         'web.assets_frontend': [
-            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali-js.js'),
+            ('after', 'web/static/lib/luxon/luxon.js', 'odoo_jalaali/static/lib/jalaali/jalaali-js.js'),
             ('after', 'web/static/src/core/**/*', 'odoo_jalaali/static/src/core/l10n/dates_fa.js'),
             'odoo_jalaali/static/src/core/datetime/datetime_picker_fa.js',
 
@@ -61,3 +64,4 @@
     },
     'license': 'LGPL-3',
 }
+
