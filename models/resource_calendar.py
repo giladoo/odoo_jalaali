@@ -12,6 +12,8 @@ class JalaaliHrEmployee(models.Model):
         end_dt_1 = datetime.combine(fields.Date.from_string(end_dt), time.max).replace(tzinfo=UTC),
         logging.info(f"\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>[ODOO_JALAALI employee]\n"
                      f"{self}\n"
+                     f"{self.resource_calendar_id}\n"
+                     f"{self.env.company.resource_calendar_id}\n"
                      f"{start_dt}  {jdatejs(start_dt)}   {fields.Date.from_string(start_dt)}  {start_dt_1}  {time.min}\n"
                      f"{end_dt}  {jdatejs(end_dt)}   {fields.Date.from_string(end_dt)}  {end_dt_1}  {time.max}\n "
                      )
