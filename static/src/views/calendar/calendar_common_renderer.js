@@ -23,7 +23,9 @@ patch(CalendarCommonRenderer.prototype, {
     },
     getDayCellClassNames(info) {
         const date = luxon.DateTime.fromJSDate(info.date).toISODate();
-        console.log('cell:', this.props.model.unusualDays, date)
+//        console.log('cell:', this.props.model, this.props.model.unusualDays, date)
+        // unusualDays is prepared addons/hr_holidays/static/src/views/calendar/calendar_model.js,
+        // fetchMandatoryDays() function
         if (this.props.model.unusualDays.includes(date)) {
             return ["o_calendar_disabled"];
         }

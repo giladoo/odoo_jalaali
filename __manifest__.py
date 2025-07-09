@@ -7,7 +7,7 @@
     'description': 'Jalaali datetime fields and datetime picker.',
     'author': 'Arash Homayounfar',
     'website': 'https://giladoo.com/odoo_jalaali',
-    'depends': ['web', 'mail'],
+    'depends': ['web', 'mail', 'hr'],
     'external_dependencies': {
         'python': ['jdatetimext', 'khayyam'],
     },
