@@ -10,7 +10,7 @@ def date_time_format__init__(self, value, locale):
     self.locale = Locale.parse(locale)
 
     # TODO:Arash; locale is not string
-    print(f" .........> fa_IR {locale},  ")
+    # print(f" .........> fa_IR {locale},  ")
     if isinstance(locale, str) and locale.startswith('fa') or isinstance(locale.language, str) and  locale.language.startswith('fa'):
         if isinstance(value, datetime):
 

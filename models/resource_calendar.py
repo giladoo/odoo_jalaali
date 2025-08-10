@@ -4,6 +4,10 @@ from datetime import datetime, time
 from jdatetimext import jdatejs
 from pytz import timezone, UTC
 
+# TODO: there is a "_get_unusual_days" on addons/hr_contract/models/hr_employee.py which will be activated if
+#  the employee has contract.
+#  Incase, user would see the disabled days only for contract period
+
 class JalaaliHrEmployee(models.Model):
     _inherit = "hr.employee"
 
