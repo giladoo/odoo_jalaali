@@ -10,7 +10,8 @@ import pytz
 import babel
 import logging
 
-_logger = models._logger
+# _logger = models._logger
+_logger = logging.getLogger(__name__)
 
 CUSTOM_READ_GROUP_DISPLAY_FORMAT = {
     # Careful with week/year formats:

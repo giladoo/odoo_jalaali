@@ -1,7 +1,7 @@
 
 {
     'name': 'Odoo Jalaali',
-    'version': '18.0.1.0.6',
+    'version': '19.0.1.0.0',
     'countries': ['ir'],
     'category': 'Localization',
     'description': 'Jalaali datetime fields and datetime picker.',
@@ -9,7 +9,7 @@
     'website': 'https://giladoo.com/odoo_jalaali',
     'depends': ['web', 'mail', 'hr'],
     'external_dependencies': {
-        'python': ['jdatetimext', 'khayyam'],
+        'python': ['jdatetimext', 'khayyam', 'icecream'],
     },
     'data': [],
     'demo': [],
