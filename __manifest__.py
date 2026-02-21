@@ -35,8 +35,8 @@
         ],
         'web.assets_backend': [
             'odoo_jalaali/static/src/views/remaining_days/remaining_days_field.js',
-            'odoo_jalaali/static/src/fix_older_browsers/script.js',
-            'odoo_jalaali/static/src/fix_older_browsers/style.scss',
+            # 'odoo_jalaali/static/src/fix_older_browsers/script.js',
+            # 'odoo_jalaali/static/src/fix_older_browsers/style.scss',
             # 'odoo_jalaali/static/src/search/**/*',
             'odoo_jalaali/static/src/css/**/*',
             ],
