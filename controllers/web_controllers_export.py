@@ -1,5 +1,5 @@
 import datetime
-from jdatetimext import jdatejs, jdatetimej, jdatetimejs
+from jdatetimext import jdatejs, jdatetimejs
 from odoo.tools import pycompat
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
